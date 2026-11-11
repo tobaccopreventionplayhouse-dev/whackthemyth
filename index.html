@@ -10,7 +10,11 @@ main{max-width:920px;margin:auto}.top{display:flex;justify-content:space-between
 h1{font-size:clamp(2rem,5vw,3.4rem);line-height:1.05;margin:12px 0}.intro{color:var(--muted);max-width:680px;line-height:1.6}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:22px 0}.stat,.panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 8px 24px #243c6010}.stat small{display:block;color:var(--muted)}.stat strong{font-size:1.6rem}
 .panel{padding:22px}.panelhead{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
-.tile{min-height:128px;border:2px solid var(--line);border-radius:15px;background:#f9fbff;padding:14px;text-align:left;font:inherit;font-weight:700;color:var(--ink);cursor:pointer;transition:.15s}.tile:hover{transform:translateY(-2px);border-color:var(--blue)}.tile:focus-visible,button:focus-visible{outline:3px solid #f2b544;outline-offset:3px}.tile .kind{display:block;font-size:.72rem;letter-spacing:.08em;color:var(--blue);margin-bottom:8px}.tile.hit{background:#fff0f1;border-color:var(--red)}.tile.safe{background:#e9f8f4;border-color:var(--teal)}button.primary{border:0;border-radius:12px;background:var(--blue);color:white;padding:12px 18px;font:inherit;font-weight:800;cursor:pointer}.feedback{min-height:54px;margin-top:16px;padding:12px 14px;border-radius:12px;background:#f2f5fa;color:var(--muted);line-height:1.45}.feedback.good{background:#e9f8f4;color:#075e55}.feedback.bad{background:#fff0f1;color:#9d2634}.foot{font-size:.83rem;color:var(--muted);line-height:1.6;margin:18px 4px}.foot a{color:var(--blue)}
+.tile{min-height:128px;border:2px solid var(--line);border-radius:15px;background:#f9fbff;padding:14px;text-align:left;font:inherit;font-weight:700;color:var(--ink);cursor:pointer;transition:.15s}.tile:hover{transform:translateY(-2px);border-color:var(--blue)}.tile:focus-visible,button:focus-visible{outline:3px solid #f2b544;outline-offset:3px}.tile .kind{display:block;font-size:.72rem;letter-spacing:.08em;color:var(--blue);margin-bottom:8px}.tile.hit{background:#fff0f1;border-color:var(--red);animation:whack .22s ease-out}.tile.safe{background:#e9f8f4;border-color:var(--teal)}@keyframes whack{0%{transform:rotate(0) scale(1)}35%{transform:rotate(-3deg) scale(.96)}70%{transform:rotate(2deg) scale(1.02)}100%{transform:rotate(0) scale(1)}}button.primary{border:0;border-radius:12px;background:var(--blue);color:white;padding:12px 18px;font:inherit;font-weight:800;cursor:pointer}.feedback{min-height:54px;margin-top:16px;padding:12px 14px;border-radius:12px;background:#f2f5fa;color:var(--muted);line-height:1.45}.feedback.good{background:#e9f8f4;color:#075e55}.feedback.bad{background:#fff0f1;color:#9d2634}.foot{font-size:.83rem;color:var(--muted);line-height:1.6;margin:18px 4px}.foot a{color:var(--blue)}
+.mallet{position:fixed;z-index:20;left:0;top:0;width:142px;height:142px;pointer-events:none;filter:drop-shadow(0 8px 5px #17243b66);transform:translate(-50%,-85%) rotate(-38deg);transform-origin:72% 78%;opacity:0;transition:opacity .12s}.mallet svg{display:block;width:100%;height:100%;overflow:visible}
+.mallet.show{opacity:1}.mallet.swing{animation:malletSwing .34s ease-in-out}
+@keyframes malletSwing{0%{transform:translate(-50%,-85%) rotate(-48deg) scale(1.08)}42%{transform:translate(-50%,-12%) rotate(24deg) scale(.94)}68%{transform:translate(-50%,-18%) rotate(8deg) scale(1.02)}100%{transform:translate(-50%,-85%) rotate(-38deg) scale(1)}}
+.tile.hit{box-shadow:0 0 0 5px #f5b4bb,0 12px 24px #c53d4b22}
 @media(max-width:650px){.grid{grid-template-columns:repeat(2,1fr)}.stats{gap:8px}.stat{padding:12px}.tile{min-height:145px}}@media(max-width:390px){.grid{grid-template-columns:1fr}}
 </style></head>
 <body><main>
@@ -18,30 +22,67 @@ h1{font-size:clamp(2rem,5vw,3.4rem);line-height:1.05;margin:12px 0}.intro{color:
 <h1>Whack the Myth</h1>
 <p class="intro">Some tobacco claims sound convincing—but are they true? Read each card and tap the <b>myths</b>. Leave accurate facts alone. You have 30 seconds!</p>
 <div class="stats"><div class="stat"><small>Score</small><strong id="score">0</strong></div><div class="stat"><small>Time left</small><strong><span id="time">30</span>s</strong></div><div class="stat"><small>Myths found</small><strong id="found">0/6</strong></div></div>
-<section class="panel"><div class="panelhead"><div><b>Find all 6 myths</b><div style="color:var(--muted);font-size:.9rem">Tap a myth to whack it.</div></div><button class="primary" id="start">Start / Restart</button></div>
+<section class="panel"><div class="panelhead"><div><b>Find all 6 myths</b><div style="color:var(--muted);font-size:.9rem">Your mallet swings down when you tap a card. Whack the myths!</div></div><button class="primary" id="start">Start / Restart</button></div>
 <div class="grid" id="grid" aria-label="Tobacco statements"></div><div class="feedback" id="feedback" aria-live="polite">Press Start when you're ready.</div></section>
 <p class="foot"><b>Remember:</b> Nicotine is highly addictive; secondhand smoke has no safe exposure level. Educational activity—not medical advice.<br>Sources: <a href="https://www.fda.gov/tobacco-products/health-effects-tobacco-use/nicotine-why-tobacco-products-are-addictive" target="_blank" rel="noopener">FDA: Nicotine and addiction</a> · <a href="https://www.cdc.gov/tobacco/secondhand-smoke/" target="_blank" rel="noopener">CDC: Secondhand smoke</a></p>
-</main>
+</main><div class="mallet" id="mallet" aria-hidden="true">
+<svg viewBox="0 0 160 160" role="presentation">
+  <defs>
+    <linearGradient id="handlePaint" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#42e6cf"/><stop offset="1" stop-color="#087eae"/></linearGradient>
+    <linearGradient id="headPaint" x1="0" y1="0" x2="0.9" y2="1"><stop stop-color="#ff765e"/><stop offset=".48" stop-color="#f02f91"/><stop offset="1" stop-color="#a52bd4"/></linearGradient>
+    <linearGradient id="headShine" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fff" stop-opacity=".8"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+  </defs>
+  <!-- sturdy rounded handle -->
+  <path d="M78 78 L111 119 Q118 128 109 135 L103 140 Q94 147 87 138 L54 96 Z" fill="#073d67" opacity=".25"/>
+  <path d="M72 69 L105 111 Q112 120 103 127 L97 132 Q88 139 81 130 L48 88 Z" fill="url(#handlePaint)" stroke="#075c86" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M65 81 L94 119" stroke="#d7fff8" stroke-width="7" stroke-linecap="round" opacity=".75"/>
+  <path d="M91 116 L105 105 L116 118 L101 131 Z" fill="#ffe35a" stroke="#a86a12" stroke-width="3"/>
+  <!-- soft, chunky rounded whack-a-mole mallet head -->
+  <rect x="12" y="24" width="112" height="70" rx="29" ry="29" transform="rotate(-12 68 59)" fill="#61216f" opacity=".25"/>
+  <rect x="9" y="15" width="112" height="70" rx="29" ry="29" transform="rotate(-12 65 50)" fill="url(#headPaint)" stroke="#8c176d" stroke-width="6"/>
+  <rect x="17" y="22" width="96" height="25" rx="13" ry="13" transform="rotate(-12 65 34)" fill="url(#headShine)" opacity=".8"/>
+  <path d="M24 66 Q61 83 103 61" fill="none" stroke="#ffcf5a" stroke-width="5" stroke-linecap="round" opacity=".95"/>
+  <path d="M22 11 L16 3 M116 16 L125 8" stroke="#ffcf5a" stroke-width="5" stroke-linecap="round"/>
+</svg>
+</div>
 <script>
-const statements=[
-{t:"“Light” or low-tar cigarettes are safe.",myth:true,why:"Myth: No cigarette is safe. “Light” labels do not remove the serious health risks."},
-{t:"Nicotine can cause addiction.",myth:false,why:"Fact: Nicotine is highly addictive and can change how the brain works."},
-{t:"Secondhand smoke is harmless if exposure is brief.",myth:true,why:"Myth: The CDC says there is no safe level of secondhand smoke exposure."},
-{t:"Smoking can harm the heart and blood vessels.",myth:false,why:"Fact: Smoking increases the risk of heart disease and stroke."},
-{t:"Vaping aerosol is just harmless water vapor.",myth:true,why:"Myth: Aerosol can contain nicotine and other harmful substances."},
-{t:"Quitting smoking can improve health at any age.",myth:false,why:"Fact: Quitting lowers the risk of smoking-related disease."},
-{t:"Chewing tobacco avoids all tobacco-related health risks.",myth:true,why:"Myth: Smokeless tobacco is harmful and can cause addiction and disease."},
-{t:"Tobacco smoke contains thousands of chemicals.",myth:false,why:"Fact: Cigarette smoke contains more than 7,000 chemicals."},
-{t:"Being outside means secondhand smoke cannot affect anyone.",myth:true,why:"Myth: Outdoor exposure can still occur; avoiding smoke is the best protection."},
-{t:"Hookah smoke is made harmless by passing through water.",myth:true,why:"Myth: Water does not remove the harmful chemicals from hookah smoke."}
+const myths=[
+{t:"“Light” or low-tar cigarettes are safe.",why:"No cigarette is safe. “Light” labels do not remove serious health risks."},
+{t:"Secondhand smoke is harmless if exposure is brief.",why:"There is no safe level of secondhand smoke exposure."},
+{t:"Vape aerosol is just harmless water vapor.",why:"Aerosol can contain nicotine and other harmful substances."},
+{t:"Chewing tobacco avoids all tobacco-related health risks.",why:"Smokeless tobacco can cause nicotine addiction and serious disease."},
+{t:"Being outside means secondhand smoke cannot affect anyone.",why:"Outdoor exposure can still occur; avoiding smoke is the best protection."},
+{t:"Hookah smoke is made harmless by passing through water.",why:"Water does not remove the harmful chemicals in hookah smoke."},
+{t:"Smoking only a few cigarettes a day is risk-free.",why:"Even low levels of smoking increase health risks."},
+{t:"Menthol cigarettes are safer than other cigarettes.",why:"Menthol does not make cigarettes safer or remove their health risks."},
+{t:"Tobacco use affects only the lungs.",why:"Smoking can harm nearly every organ system in the body."},
+{t:"Nicotine-free means a vaping product has no possible risks.",why:"A product's aerosol may contain other potentially harmful substances."}
+];
+const facts=[
+{t:"Nicotine is highly addictive.",why:"Nicotine can change how the brain works and cause cravings."},
+{t:"Smoking can harm the heart and blood vessels.",why:"Smoking increases the risk of heart disease and stroke."},
+{t:"Quitting smoking can improve health at any age.",why:"Quitting lowers the risk of smoking-related disease over time."},
+{t:"Cigarette smoke contains thousands of chemicals.",why:"Cigarette smoke contains more than 7,000 chemicals."},
+{t:"Nicotine can affect the developing adolescent brain.",why:"The brain continues developing into young adulthood."},
+{t:"Secondhand smoke can harm children and adults.",why:"People who do not smoke can still be harmed by exposure."},
+{t:"Tobacco use can cause cancer.",why:"Tobacco use is a major preventable cause of cancer."},
+{t:"Quitting can benefit health even after years of smoking.",why:"Health benefits begin after quitting and continue over time."}
 ];
 let score=0,found=0,time=30,timer=null,active=false,deck=[];
 const $=id=>document.getElementById(id);
-function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
-function render(){ $("grid").innerHTML="";deck.forEach((s,i)=>{const b=document.createElement("button");b.className="tile";b.innerHTML=`<span class="kind">STATEMENT ${i+1}</span>${s.t}`;b.onclick=()=>pick(i,b);$("grid").appendChild(b)})}
+function shuffle(a){const copy=[...a];for(let i=copy.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[copy[i],copy[j]]=[copy[j],copy[i]]}return copy}
+function render(){ $("grid").innerHTML="";deck.forEach((s,i)=>{const b=document.createElement("button");b.className="tile";b.innerHTML=`<span class="kind">STATEMENT ${i+1} · READY TO WHACK</span>${s.t}`;b.onclick=()=>pick(i,b);$("grid").appendChild(b)})}
 function update(){$("score").textContent=score;$("found").textContent=found+"/6";$("time").textContent=time}
 function end(msg){active=false;clearInterval(timer);$("feedback").textContent=msg;$("start").textContent="Play again"}
-function pick(i,b){if(!active||b.disabled)return;const s=deck[i];b.disabled=true;if(s.myth){score+=10;found++;b.classList.add("hit");$("feedback").className="feedback good";$("feedback").textContent="WHACK! "+s.why}else{score=Math.max(0,score-5);b.classList.add("safe");$("feedback").className="feedback bad";$("feedback").textContent="That one is a fact—5 points off. "+s.why}update();if(found===6)end("You found every myth! Great fact-checking. Final score: "+score+".");}
-function start(){clearInterval(timer);score=0;found=0;time=30;active=true;deck=shuffle(statements).slice(0,10);update();$("feedback").className="feedback";$("feedback").textContent="Go! Find the six myths."; $("start").textContent="Restart";render();timer=setInterval(()=>{time--;update();if(time<=0)end("Time's up! You found "+found+" of 6 myths. Final score: "+score+".")},1000)}
+function swingMallet(card){
+ const hammer=$("mallet"),r=card.getBoundingClientRect();
+ hammer.style.left=(r.left+r.width*.72)+"px";
+ hammer.style.top=(r.top+r.height*.32)+"px";
+ hammer.classList.remove("show","swing");void hammer.offsetWidth;
+ hammer.classList.add("show","swing");
+ setTimeout(()=>hammer.classList.remove("show","swing"),380);
+}
+function pick(i,b){if(!active||b.disabled)return;swingMallet(b);const s=deck[i];b.disabled=true;if(s.myth){score+=10;found++;b.classList.add("hit");b.innerHTML=`<span class="kind">🔨 WHACKED!</span>${s.t}`;$("feedback").className="feedback good";$("feedback").textContent="WHACK! "+s.why}else{score=Math.max(0,score-5);b.classList.add("safe");b.innerHTML=`<span class="kind">FACT — SAFE</span>${s.t}`;$("feedback").className="feedback bad";$("feedback").textContent="Oops! That's a fact—5 points off. "+s.why}update();if(found===6)end("You found every myth! Great fact-checking. Final score: "+score+".");}
+function start(){clearInterval(timer);score=0;found=0;time=30;active=true;deck=shuffle([...shuffle(myths).slice(0,6).map(x=>({...x,myth:true})),...shuffle(facts).slice(0,4).map(x=>({...x,myth:false}))]);deck=shuffle(deck);update();$("feedback").className="feedback";$("feedback").textContent="Go! Use your mallet to whack the six myths. Every new round gets a fresh random selection."; $("start").textContent="New round";render();timer=setInterval(()=>{time--;update();if(time<=0)end("Time's up! You found "+found+" of 6 myths. Final score: "+score+".")},1000)}
 $("start").addEventListener("click",start);render();
 </script></body></html>
